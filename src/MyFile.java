@@ -1,7 +1,7 @@
 
 public class MyFile 
 {
-	MyFile(String url, String pdfName)
+	public MyFile(String url, String pdfName)
 	{
 		_url = url;
 		_pdfName = pdfName;

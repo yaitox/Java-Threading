@@ -5,7 +5,7 @@ import java.util.concurrent.Executors;
 
 public class ThreadMgr 
 {
-	static final public int MAX_THREADS = 8;
+	static final public int MAX_THREADS = 3;
 	
 	ThreadMgr(Queue<MyFile> urls) 
 	{

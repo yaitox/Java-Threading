@@ -13,7 +13,7 @@ public class ThreadWorker implements Runnable
 		try 
 		{
 			Runtime.getRuntime().exec(_command);
-		} catch (IOException e) { e.printStackTrace();}
+		} catch (IOException e) { e.printStackTrace(); }
 	}
 	
 	private String _command;

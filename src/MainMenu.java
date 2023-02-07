@@ -23,7 +23,5 @@ public class MainMenu
 
 		ThreadMgr threadMgr = new ThreadMgr(urls);
 		threadMgr.Parse("C:\\ParsedFiles");
-		
-		
 	}
 }

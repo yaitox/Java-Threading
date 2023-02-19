@@ -1,15 +1,19 @@
 
 public class MyFile 
 {
-	public MyFile(String url, String pdfName)
+	public MyFile(boolean local, String origin, String pdfName)
 	{
-		_url = url;
+		_isLocal = local;
+		_origin = origin;
 		_pdfName = pdfName;
 	}
 	
-	public String GetURL() { return _url; }
+	final public boolean IsLocal() { return _isLocal; }
+	
+	public String GetOrigin() { return _origin; }
 	public String GetPDFName() { return _pdfName; }
 	
-	private String _url;
+	private String _origin;
 	private String _pdfName;
+	private boolean _isLocal;
 }

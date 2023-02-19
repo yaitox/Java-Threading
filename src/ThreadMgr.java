@@ -1,33 +1,53 @@
 import java.io.IOException;
-import java.util.Queue;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class ThreadMgr 
 {
 	static final public int MAX_THREADS = 3;
 	
-	ThreadMgr(Queue<MyFile> urls) 
+	final static public void Parse(ArrayList<MyFile> files)
 	{
-		_urls = urls;
-		_threadPool = Executors.newFixedThreadPool(MAX_THREADS);
-	}
-	
-	public void Parse(String dir) throws IOException
-	{
-		Runtime.getRuntime().exec("cmd /c mkdir " + dir);
-		String command = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome --headless --print-to-pdf=\"" + dir + "\\";
-		
-		while (!_urls.isEmpty())
+		try 
 		{
-			MyFile file = _urls.poll();
-			Runnable worker = new ThreadWorker(command + file.GetPDFName() + ".pdf\" " + file.GetURL());
-			_threadPool.execute(worker);
+			Runtime.getRuntime().exec("cmd /c mkdir C:\\ParsedFiles");
+		} 
+		catch (IOException ioe) { ioe.printStackTrace(); }
+		
+		final String commandChrome = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome --headless --print-to-pdf=\"C:\\ParsedFiles\\";
+		final String commandSoffice = "C:\\Program Files\\LibreOffice\\program\\soffice --convert-to pdf --outdir \"C:\\ParsedFiles\" \"";
+		
+		_threadPool = Executors.newFixedThreadPool(MAX_THREADS);
+		
+		List<Future<?>> futures = new ArrayList<>();
+		for (MyFile file : files)
+		{
+			String command = "";
+			if (file.IsLocal())
+				command += commandSoffice + file.GetOrigin() + "\" --headless";
+			else
+				command += commandChrome + file.GetPDFName() + ".pdf\" " + file.GetOrigin();
+			
+			Runnable worker = new ThreadWorker(command);
+			Future<?> future = _threadPool.submit(worker);
+			futures.add(future);
 		}
 		
 		_threadPool.shutdown();
+		
+		try 
+		{
+			for (Future<?> future : futures)
+				future.get();	
+		}
+		catch (ExecutionException | InterruptedException e) { e.printStackTrace(); }
+		
+		System.out.println("Los archivos han terminado de ejecutarse. La ruta de acceso es las siguiente: C:\\ParsedFiles");
 	}
 
-	private ExecutorService _threadPool;
-	private Queue<MyFile> _urls;
+	static private ExecutorService _threadPool;
 }
